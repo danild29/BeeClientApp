@@ -1,0 +1,100 @@
+﻿@page "/user/register"
+
+@rendermode InteractiveWebAssembly
+@inject NavigationManager Navigation
+@inject UserData userData
+@inject IAlertService AlertService
+@inject JavascriptHelper jsHelper
+
+
+<div>
+    @foreach(var message in messages)
+    {
+        @message
+    }
+</div>
+
+<div class="card">
+    <h4 class="card-header">Register</h4>
+    <div class="card-body">
+        <EditForm Model="user" OnValidSubmit="HandleSubmit" FormName="user-register">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <LabelFor For="@(() => user.FirstName)" />
+                <InputText @bind-Value="user.FirstName" class="form-control" />
+                <ValidationMessage For="@(() => user.FirstName)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => user.LastName)" />
+                <InputText @bind-Value="user.LastName" class="form-control" />
+                <ValidationMessage For="@(() => user.LastName)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => user.Email)" />
+                <InputText @bind-Value="user.Email" class="form-control" />
+                <ValidationMessage For="@(() => user.Email)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => user.Password)" />
+                <InputText @bind-Value="user.Password" type="password" class="form-control" />
+                <ValidationMessage For="@(() => user.Password)" />
+            </div>
+
+
+            <button disabled="@loading" class="btn btn-primary">
+                @if (loading)
+                {
+                    <span class="spinner-border spinner-border-sm mr-1"></span>
+                }
+                Register
+            </button>
+
+            <NavLink href="user/login" class="btn btn-link">Cancel</NavLink>
+        </EditForm>
+        <input type="checkbox" @bind="@save">
+        <input rememver me />
+    </div>
+</div>
+
+
+@code {
+    CreateUser user = new();
+    private bool loading;
+    private bool save = false;
+
+    private List<string> messages = new();
+
+    private async Task HandleSubmit()
+    {
+        // reset alerts on submit
+        //AlertService.Clear();
+
+        loading = true;
+        try
+        {
+            await userData.ToggleRemember(save);
+
+
+            await userData.RegisterWIthStorage(user);
+            UserModel me = await userData.GetMeFromStorage();
+            //AlertService.Success("Registration successful", keepAfterRouteChange: true);
+
+            Navigation.NavigateTo("companies/my");
+        }
+        catch (Exception ex)
+        {
+            //AlertService.Error(ex.Message);
+            
+            var valid = ValidationModel.GetValidation(ex);
+
+            messages = valid.GetAllErrors().ToList();
+        }
+        finally
+        {
+            loading = false;
+            StateHasChanged();
+        }
+    }
+
+    
+}

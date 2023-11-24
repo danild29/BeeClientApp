@@ -1,0 +1,27 @@
+﻿@using System.Reflection
+
+<label>@DisplayName</label>
+
+@code {
+    [Parameter] public Expression<Func<string>>? For { get; set; }
+    private string DisplayName = "";
+    protected override void OnParametersSet()
+    {
+        if (For is null) return;
+        MemberExpression? memberExpression = For.Body as MemberExpression;
+        if (memberExpression == null)
+        {
+            throw new ArgumentException("Expression must be a member expression");
+        }
+
+        MemberInfo memberInfo = memberExpression.Member;
+        DisplayAttribute? displayAttribute = memberInfo.GetCustomAttribute<DisplayAttribute>();
+        if (displayAttribute is null || displayAttribute.Name is null)
+        {
+            DisplayName = memberInfo.Name;
+            return;
+        }
+
+        DisplayName = displayAttribute!.Name!;
+    }
+}

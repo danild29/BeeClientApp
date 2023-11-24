@@ -1,0 +1,98 @@
+﻿@page "/user/login"
+@rendermode InteractiveWebAssembly
+@inject NavigationManager Navigation
+@inject UserData userData
+@inject IAlertService AlertService
+@inject JavascriptHelper jsHelper
+<div>
+    @foreach (var message in messages)
+    {
+        @message
+    }
+</div>
+
+
+<div class="card">
+    <h4 class="card-header">Login</h4>
+    <div class="card-body">
+        <EditForm Model="user" OnValidSubmit="HandleSubmit" FormName="user-login">
+            <DataAnnotationsValidator />
+            
+            
+            <div class="form-group">
+                <LabelFor For="@(() => user.Email)" />
+                <InputText @bind-Value="user.Email" class="form-control" />
+                <ValidationMessage For="@(() => user.Email)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => user.Password)" />
+                <InputText @bind-Value="user.Password" type="password" class="form-control" />
+                <ValidationMessage For="@(() => user.Password)" />
+            </div>
+
+            <button disabled="@loading" class="btn btn-primary">
+                @if (loading) 
+                {
+                    <span class="spinner-border spinner-border-sm mr-1"></span>
+                }
+                Login
+            </button>
+            <NavLink href="user/register" class="btn btn-link">Register</NavLink>
+            <input type="checkbox"  @bind="@save" >
+            <input rememver me />
+        </EditForm>
+    </div>
+</div>
+
+
+
+@code {
+
+    UserAccount user = new("", "");
+    private bool loading;
+    private bool save = false;
+    private List<string> messages = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var res = await userData.CheckIfAlredyLogged();
+            if(res is not null)
+                Navigation.NavigateTo("companies/my");
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        // reset alerts on submit
+        ///AlertService.Clear();
+
+        loading = true;
+        try
+        {
+            await userData.ToggleRemember(save);
+
+
+            var token = await userData.TokenData.GetToken(user);
+            AlertService.Success("Registration successful", keepAfterRouteChange: true);
+            UserModel me = await userData.GetMe(token.access);
+
+            Navigation.NavigateTo("companies/my");
+        }
+        catch (Exception ex)
+        {
+            //AlertService.Error(ex.Message);
+            
+
+            var valid = ValidationModel.GetValidation(ex);
+
+            messages = valid.GetAllErrors().ToList();
+        }
+        finally
+        {
+            loading = false;
+            StateHasChanged();
+        }
+    }
+}
