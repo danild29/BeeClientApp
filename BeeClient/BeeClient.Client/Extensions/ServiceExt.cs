@@ -1,5 +1,5 @@
 ﻿using BeeClient.Client.Data;
-using BeeClient.Client.Data.Logs;
+//using BeeClient.Client.Data.Logs;
 using BeeClient.Client.Helpers;
 using Blazored.LocalStorage;
 
@@ -18,7 +18,7 @@ public static class ServiceExt
         services.AddScoped<IAlertService, AlertService>();
 
         services.AddScoped<JavascriptHelper>();
-        services.AddScoped<LogWriter>();
+        //services.AddScoped<LogWriter>();
         services.AddScoped<DataSender>();
         services.AddScoped<TokenData>();
         services.AddScoped<UserData>();

@@ -1,4 +1,4 @@
-﻿using BeeClient.Client.Data.Logs;
+﻿//using BeeClient.Client.Data.Logs;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
@@ -9,13 +9,13 @@ public class DataSender
 {
     public readonly HttpClient _client;
 
-    private readonly LogWriter _logWriter;
+    //private readonly LogWriter _logWriter;
 
-    public DataSender(HttpClient client, LogWriter logWriter)
-    {
-        _client = client;
-        _logWriter = logWriter;
-    }
+    //public DataSender(HttpClient client, LogWriter logWriter)
+    //{
+    //    _client = client;
+    //    _logWriter = logWriter;
+    //}
 
 
     //private JsonSerializerOptions CaseInsensitive = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
@@ -29,7 +29,7 @@ public class DataSender
         StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
 
         HttpResponseMessage response = await _client.PostAsync(url, data);
-        await _logWriter.WriteToLogs(response);
+        //await _logWriter.WriteToLogs(response);
 
         string result = await response.Content.ReadAsStringAsync();
 
@@ -51,7 +51,7 @@ public class DataSender
         }
 
         HttpResponseMessage response = await _client.GetAsync(url);
-        await _logWriter.WriteToLogs(response);
+        //await _logWriter.WriteToLogs(response);
 
         string result = await response.Content.ReadAsStringAsync();
 

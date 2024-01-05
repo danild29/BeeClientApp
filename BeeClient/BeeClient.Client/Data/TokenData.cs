@@ -1,4 +1,4 @@
-﻿using BeeClient.Client.Data.Logs;
+﻿//using BeeClient.Client.Data.Logs;
 using BeeClient.Client.Entities.Models;
 using Newtonsoft.Json;
 using System.Text;

@@ -1,0 +1,121 @@
+﻿@page "/user/register_company"
+
+@rendermode InteractiveWebAssembly
+@inject NavigationManager Navigation
+@inject UserData userData
+@inject IAlertService AlertService
+@inject JavascriptHelper jsHelper
+
+
+<div>
+    @foreach (var message in messages)
+    {
+        @message
+    }
+</div>
+
+<div class="card">
+    <h4 class="card-header">Регистрация компании</h4>
+    <div class="card-body">
+        <EditForm Model="company" OnValidSubmit="HandleSubmit" FormName="company-register">
+            <DataAnnotationsValidator />
+            <div class="form-group">
+                <LabelFor For="@(() => company.Name)" />
+                <InputText @bind-Value="company.Name" class="form-control" />
+                <ValidationMessage For="@(() => company.Name)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => company.WorkType1)" />
+                <InputText @bind-Value="company.WorkType1" class="form-control" />
+                <ValidationMessage For="@(() => company.WorkType1)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => company.WorkType2)" />
+                <InputText @bind-Value="company.WorkType2" class="form-control" />
+                <ValidationMessage For="@(() => company.WorkType2)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => company.Description)" />
+                <InputText @bind-Value="company.Description" class="form-control" />
+                <ValidationMessage For="@(() => company.Description)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => company.INN)" />
+                <InputText @bind-Value="company.INN" class="form-control" />
+                <ValidationMessage For="@(() => company.INN)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => company.Phone)" />
+                <InputText @bind-Value="company.Phone" class="form-control" />
+                <ValidationMessage For="@(() => company.Phone)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => company.Email)" />
+                <InputText @bind-Value="company.Email" class="form-control" />
+                <ValidationMessage For="@(() => company.Email)" />
+            </div>
+            <div class="form-group">
+                <LabelFor For="@(() => company.Adress)" />
+                <InputText @bind-Value="company.Adress" class="form-control" />
+                <ValidationMessage For="@(() => company.Adress)" />
+            </div>
+
+
+            <button disabled="@loading" class="btn btn-primary">
+                @if (loading)
+                {
+                    <span class="spinner-border spinner-border-sm mr-1"></span>
+                }
+                Register
+            </button>
+
+            <NavLink href="user/login" class="btn btn-link">Cancel</NavLink>
+        </EditForm>
+        <input type="checkbox" @bind="@save">
+        <input rememver me />
+    </div>
+</div>
+
+
+@code {
+    CreateCompany company = new();
+    CreateUser user = new();
+    private bool loading;
+    private bool save = false;
+
+    private List<string> messages = new();
+
+    private async Task HandleSubmit()
+    {
+        // reset alerts on submit
+        //AlertService.Clear();
+
+        loading = true;
+        try
+        {
+            await userData.ToggleRemember(save);
+
+
+            await userData.RegisterWIthStorage(user);
+            UserModel me = await userData.GetMeFromStorage();
+            //AlertService.Success("Registration successful", keepAfterRouteChange: true);
+
+            Navigation.NavigateTo("companies/my");
+        }
+        catch (Exception ex)
+        {
+            //AlertService.Error(ex.Message);
+
+            var valid = ValidationModel.GetValidation(ex);
+
+            messages = valid.GetAllErrors().ToList();
+        }
+        finally
+        {
+            loading = false;
+            StateHasChanged();
+        }
+    }
+
+
+}
