@@ -2,9 +2,8 @@
 
 @rendermode InteractiveWebAssembly
 @inject NavigationManager Navigation
-@inject UserData userData
-@inject IAlertService AlertService
-@inject JavascriptHelper jsHelper
+@inject CompanyData companyData
+
 
 
 <div>
@@ -79,7 +78,6 @@
 
 @code {
     CreateCompany company = new();
-    CreateUser user = new();
     private bool loading;
     private bool save = false;
 
@@ -87,34 +85,10 @@
 
     private async Task HandleSubmit()
     {
-        // reset alerts on submit
-        //AlertService.Clear();
+        var result = companyData.Register(company);
 
-        loading = true;
-        try
-        {
-            await userData.ToggleRemember(save);
-
-
-            await userData.RegisterWIthStorage(user);
-            UserModel me = await userData.GetMeFromStorage();
-            //AlertService.Success("Registration successful", keepAfterRouteChange: true);
-
-            Navigation.NavigateTo("companies/my");
-        }
-        catch (Exception ex)
-        {
-            //AlertService.Error(ex.Message);
-
-            var valid = ValidationModel.GetValidation(ex);
-
-            messages = valid.GetAllErrors().ToList();
-        }
-        finally
-        {
-            loading = false;
-            StateHasChanged();
-        }
+        // не забудь проверить ответ сервисат и отоброзить ошибки, ошибки тоже надо десериализовать в отдельный класс . 
+        // Можешь смотреть ответы сервера в консоли там все ответы пишутся 
     }
 
 

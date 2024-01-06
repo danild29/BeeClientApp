@@ -76,18 +76,27 @@
 
 
             await userData.RegisterWIthStorage(user);
-            UserModel me = await userData.GetMeFromStorage();
-            //AlertService.Success("Registration successful", keepAfterRouteChange: true);
+            Result<UserModel> result = await userData.GetMeFromStorage();
 
-            Navigation.NavigateTo("companies/my");
+
+            result.Match(me =>
+            {
+                //AlertService.Success("Registration successful", keepAfterRouteChange: true);
+                Navigation.NavigateTo("companies/my");
+            },
+            error =>
+            {
+                //AlertService.Error(ex.Message);
+
+                var valid = ValidationModel.GetValidation(error);
+
+                messages = valid.GetAllErrors().ToList();
+            });
+
         }
         catch (Exception ex)
         {
-            //AlertService.Error(ex.Message);
-            
-            var valid = ValidationModel.GetValidation(ex);
-
-            messages = valid.GetAllErrors().ToList();
+            throw;
         }
         finally
         {

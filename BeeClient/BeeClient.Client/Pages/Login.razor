@@ -1,8 +1,10 @@
 ﻿@page "/user/login"
+@using Newtonsoft.Json
 @rendermode InteractiveWebAssembly
 @inject NavigationManager Navigation
 @inject UserData userData
 @inject IAlertService AlertService
+@inject LogWriter log
 @inject JavascriptHelper jsHelper
 <div>
     @foreach (var message in messages)
@@ -57,9 +59,18 @@
     {
         if(firstRender)
         {
-            var res = await userData.CheckIfAlredyLogged();
-            if(res is not null)
+
+
+            Result<UserModel> result = await userData.CheckIfAlredyLogged();
+            result.Match(u =>
+            {
                 Navigation.NavigateTo("companies/my");
+            }, error =>
+            {
+                CompanyError validation = error.ParseTo<CompanyError>();
+                messages.Add(validation?.Detail);
+                StateHasChanged();
+            });
         }
     }
 
@@ -74,20 +85,26 @@
             await userData.ToggleRemember(save);
 
 
-            var token = await userData.TokenData.GetToken(user);
-            AlertService.Success("Registration successful", keepAfterRouteChange: true);
-            UserModel me = await userData.GetMe(token.access);
+            Result<TokenModel> token = await userData.TokenData.GetToken(user);
 
-            Navigation.NavigateTo("companies/my");
+            await token.Match(async x =>
+                {
+                    var me = await userData.GetMe(x.access);
+                    Navigation.NavigateTo("companies/my");
+                    //AlertService.Success("Registration successful", keepAfterRouteChange: true);
+                },
+                async error =>
+                {
+                    var valid = ValidationModel.GetValidation(error);
+
+                    messages = valid.GetAllErrors().ToList();
+                }
+            );
+
         }
         catch (Exception ex)
         {
-            //AlertService.Error(ex.Message);
-            
-
-            var valid = ValidationModel.GetValidation(ex);
-
-            messages = valid.GetAllErrors().ToList();
+            throw;
         }
         finally
         {

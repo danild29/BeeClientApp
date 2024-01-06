@@ -5,16 +5,13 @@ namespace BeeClient.Client.Entities.Models;
 
 public class ValidationModel
 {
-    public Exception Error {  get; set; }
     public string details { get; set; }
     public List<string> email { get; set; }
     public List<string> password { get; set; }
     
-    public static ValidationModel? GetValidation(Exception ex)
+    public static ValidationModel? GetValidation(Error error)
     {
-        ValidationModel? model = JsonConvert.DeserializeObject<ValidationModel>(ex.Message);
-        if (model is null) return model;
-        model.Error = ex;
+        ValidationModel? model = JsonConvert.DeserializeObject<ValidationModel>(error.Content);
         return model;
     }
 
@@ -40,4 +37,11 @@ public class ValidationModel
         //    .Select(x => x.GetValue(this)));
         return errors;
     }
+
+
+}
+
+public class CompanyError
+{
+    public string Detail { get; set; }
 }

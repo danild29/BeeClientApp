@@ -1,4 +1,6 @@
 ﻿//using BeeClient.Client.Data.Logs;
+using BeeClient.Client.Entities.Models;
+using BeeClient.Client.Helpers;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
@@ -7,29 +9,29 @@ namespace BeeClient.Client.Data;
 
 public class DataSender
 {
-    public readonly HttpClient _client;
+    private readonly HttpClient client;
 
-    //private readonly LogWriter _logWriter;
+    private readonly LogWriter logWriter;
 
-    //public DataSender(HttpClient client, LogWriter logWriter)
-    //{
-    //    _client = client;
-    //    _logWriter = logWriter;
-    //}
+    public DataSender(HttpClient client, LogWriter logWriter)
+    {
+        this.client = client;
+        this.logWriter = logWriter;
+    }
 
 
     //private JsonSerializerOptions CaseInsensitive = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 
 
-    public async Task<TRes> Post<TRes, TData>(TData info, string url)
+    public async Task<Result<TRes>> Post<TRes, TData>(TData info, string url)
     {
         string json = JsonConvert.SerializeObject(info);
 
 
         StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
 
-        HttpResponseMessage response = await _client.PostAsync(url, data);
-        //await _logWriter.WriteToLogs(response);
+        HttpResponseMessage response = await client.PostAsync(url, data);
+        await logWriter.WriteToConsole(response);
 
         string result = await response.Content.ReadAsStringAsync();
 
@@ -39,19 +41,20 @@ public class DataSender
             return JsonConvert.DeserializeObject<TRes>(result);
         }
 
-        throw new Exception(result);
+        await logWriter.WriteToConsole(result);
+        return Result.Failure<TRes>(await Error.Create(response));
     }
 
 
-    public async Task<TRes> Get<TRes>(string url, string? token = null)
+    public async Task<Result<TRes>> Get<TRes>(string url, string? token = null)
     {
         if (token is not null)
         {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        HttpResponseMessage response = await _client.GetAsync(url);
-        //await _logWriter.WriteToLogs(response);
+        HttpResponseMessage response = await client.GetAsync(url);
+        await logWriter.WriteToConsole(response);
 
         string result = await response.Content.ReadAsStringAsync();
 
@@ -60,7 +63,8 @@ public class DataSender
             return JsonConvert.DeserializeObject<TRes>(result);
         }
 
-        throw new Exception(result);
+        await logWriter.WriteToConsole(result);
+        return Result.Failure<TRes>(await Error.Create(response));
     }
 
 

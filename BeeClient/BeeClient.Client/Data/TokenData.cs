@@ -20,11 +20,11 @@ public class TokenData
     }
 
 
-    public async Task<string> RefreshToken(string refresh)
+    public async Task<Result<string>> RefreshToken(string refresh)
     {
         return await _sender.Post<string, dynamic>(new { refresh }, address + "refresh/");
     }
-    public async Task<TokenModel> GetToken(UserAccount account)
+    public async Task<Result<TokenModel>> GetToken(UserAccount account)
     {
         return await _sender.Post<TokenModel, dynamic>(account, address);
     }

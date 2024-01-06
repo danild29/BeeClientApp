@@ -28,35 +28,44 @@ public class UserData
     private readonly DataSender _sender;
     private readonly ILocalStorageService _storage;
 
-    public async Task<UserModel> RegisterWIthStorage(CreateUser user)
+    public async Task<Result<UserModel>> RegisterWIthStorage(CreateUser user)
     {
-        var registered = await Register(user);
+        Result<UserModel>? registered = await Register(user);
+        if(registered.IsFailure)
+        {
+            return registered;
+        }
         await _storage.SetItemAsync(accountKey, new UserAccount(user.Email, user.Password));
         return registered;
     }
 
-    public async Task<UserModel?> GetMeFromStorage()
+    public async Task<Result<UserModel>> GetMeFromStorage()
     {
-        var account = await _storage.GetItemAsync<UserAccount>(accountKey);
+        UserAccount? account = await _storage.GetItemAsync<UserAccount>(accountKey);
         if (account == null) return null;
 
 
-        var tokens = await TokenData.GetToken(account);
-        if (tokens == null) return null;
-        await _storage.SetItemAsync(tokenKey, tokens);
+        Result<TokenModel>? resultTokens = await TokenData.GetToken(account);
+        if(resultTokens.IsFailure)
+        {
+            return Result.Failure<UserModel>( resultTokens.Error);
+        }
+
+        
+        await _storage.SetItemAsync(tokenKey, resultTokens.Value);
 
 
-        return await GetMe(tokens.access);
+        return await GetMe(resultTokens.Value.access);
     }
 
-    public async Task<UserModel?> CheckIfAlredyLogged()
+    public async Task<Result<UserModel>> CheckIfAlredyLogged()
     {
         bool? saved = await _storage.GetItemAsync<bool?>(rememberKey);
         if(saved == true)
         {
             return await GetMeFromStorage();
         }
-        return null;
+        return Result.Failure<UserModel>(Error.None);
     }
     public async Task ToggleRemember(bool save)
     {
@@ -66,19 +75,24 @@ public class UserData
 
 
 
-    public async Task<UserModel> Register(CreateUser user)
+    public async Task<Result<UserModel>> Register(CreateUser user)
     {
         return await _sender.Post<UserModel, CreateUser>(user, address);
     }
     
-    public async Task<UserModel> GetMe(string token)
+    public async Task<Result<UserModel>> GetMe(string token)
     {
-        var data =  await _sender.Get<DataMe>(address + "me/", token);
-        return data.Data;
+        Result<DataMe>? result =  await _sender.Get<DataMe>(address + "me/", token);
+        if(result.IsFailure)
+        {
+            return Result.Failure<UserModel>(result.Error);
+        }
+
+        return result.Value.Data;
     }
     
     
-    public async Task<UserModel> GetUser(int id, string token)
+    public async Task<Result<UserModel>> GetUser(int id, string token)
     {
         return await _sender.Get<UserModel>(address + id.ToString(), token);
     }
