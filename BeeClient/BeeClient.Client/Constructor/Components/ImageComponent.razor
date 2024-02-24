@@ -8,10 +8,11 @@
      draggable="true"
      @onclick="@OnClick">
      
-    <div class="image-container" style="--myurl: @Url;"></div>
+    <div class="image-element" style="--urlp: @Url;"></div>
 </div>
 
 
-@code{
-    public string Url => $"url( {Element.Url} );";
+
+@code {
+    public string Url => $"url( {Element.Url} )";
 }

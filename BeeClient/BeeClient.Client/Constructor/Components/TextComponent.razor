@@ -23,7 +23,7 @@
     }
     else
     {
-        <div class="text-element" style="--my-font-size: @FontSize; --my-color: @Color; --my-backgorund-color: @BackgroundColor;">
+        <div class="text-element" style="--font-sizep: @FontSize; --colorp: @Color; --backgorund-colorp: @BackgroundColor;">
             @Text
         </div>
     }
@@ -31,6 +31,9 @@
 </div>
 
 @code{
+
+    private bool Edits = false;
+
     public string Text
     {
         get => Element.Text;
@@ -67,7 +70,6 @@
         }
     }
 
-    bool Edits = false;
     protected virtual async Task OnDoubleClick(EventArgs e)
     {
         Edits = true;
