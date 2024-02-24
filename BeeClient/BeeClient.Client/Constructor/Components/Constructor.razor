@@ -2,12 +2,12 @@
 
 @inject IJSRuntime JsRun
 
-<div id="mydrag-container"
-    class="dropzone mydrag-container1"
+<div id="drag-container"
+     class="dropzone drag-container-inner"
     @ondragover="ChangePosition"
     @ondragenter="OnDragEnter"
     @ondragleave="OnDragLeave"
-    style="--mywidth: @StrWidth; --myheight: @StrHeight;">
+     style="--widthp: @StrWidth; --heightp: @StrHeight;">
 
     
     <StretcherComponent Ctor="this" handler="StretcherHander"></StretcherComponent>

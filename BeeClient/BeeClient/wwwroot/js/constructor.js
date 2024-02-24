@@ -1,5 +1,5 @@
 
 
 window.MyDOMGetBoundingClientRect = () => {
-    return document.getElementById("mydrag-container").getBoundingClientRect();
+    return document.getElementById("drag-container").getBoundingClientRect();
 };

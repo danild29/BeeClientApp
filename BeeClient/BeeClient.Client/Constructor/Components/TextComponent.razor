@@ -2,9 +2,8 @@
 
 <div @ondragstart="OnDragStartElemnt"
      @ondragleave="OnDragEndElement"
-     
-     class="mydraggable"
-     style="resize: both; --my-top: @Top; --my-left: @Left; --mywidth: @Width; --myheight: @Height; cursor: @cursor;"
+     class="draggable"
+     style="resize: both; --topp: @Top; --leftp: @Left; --widthp: @Width; --heightp: @Height; cursor: @cursor;"
      draggable="true"
      @onclick="@OnClick"
      @ondblclick="@OnDoubleClick"
@@ -24,7 +23,7 @@
     }
     else
     {
-        <div class="mytextelement" style="--my-font-size: @FontSize; --my-color: @Color; --my-backgorund-color: @BackgroundColor;">
+        <div class="text-element" style="--my-font-size: @FontSize; --my-color: @Color; --my-backgorund-color: @BackgroundColor;">
             @Text
         </div>
     }
