@@ -1,0 +1,17 @@
+﻿@inherits BaseComponent<ImageElement>
+
+
+<div @ondragstart="(e) => OnDragStartElemnt(e)"
+     @ondragend="OnDragEndElement"
+     class="mydraggable @dropClass"
+     style="--my-top: @Top; --my-left: @Left; --mywidth: @Width; --myheight: @Height;"
+     draggable="true"
+     @onclick="@OnClick">
+     
+    <div class="image-container" style="--myurl: @Url;"></div>
+</div>
+
+
+@code{
+    public string Url => $"url( {Element.Url} );";
+}

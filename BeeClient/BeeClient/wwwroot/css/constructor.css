@@ -1,0 +1,103 @@
+
+.contructor-space {
+    border: 1px solid black;
+    align-items: center;
+}
+
+.constructor {
+    border: 1px solid #1861ac;
+    width: 800px;
+    height: 400px;
+}
+
+.container {
+    border: 1px solid #5f4d4d;
+}
+
+.container ul {
+    display: flex;
+}
+
+.dropzone {
+    padding: 3px;
+    border: 1px dashed #75868a;
+    list-style: none;
+}
+
+.no-drop {
+    border: 2px dashed red;
+}
+
+.can-drop {
+    border: 2px dashed green;
+}
+
+.draggable {
+    margin-bottom: 1px;
+    padding: 1px 2px;
+    border: 1px solid #424d5c;
+    cursor: grab;
+    border-radius: 5px;
+}
+
+.draggable:active {
+    cursor: grabbing;
+}
+
+.dragging {
+    cursor: grabbing;
+}
+/*==================================*/
+
+#drag-container {
+    width: 600px;
+    height: 800px;
+    border: 1px solid black;
+    position: relative;
+}
+
+.draggable {
+    width: 100px;
+    height: 50px;
+    background-color: lightblue;
+    position: absolute;
+}
+
+
+/*=================================   with root*/
+:root {
+    --my-top: 0px;
+    --my-left: 0px;
+    --mywidth: 0px;
+    --myheight: 0px;
+    --myurl: '';
+}
+
+
+#mydrag-container {
+    width: var(--mywidth);
+    height: var(--myheight);
+    border: 1px solid black;
+    position: relative;
+}
+
+.mydrag-container1 {
+    width: var(--mywidth);
+    height: var(--myheight);
+    border: 1px solid black;
+}
+
+.mydraggable {
+    background-color: lightblue;
+    position: absolute;
+    width: var(--mywidth);
+    height: var(--myheight);
+    top: var(--my-top);
+    left: var(--my-left);
+}
+
+.mytextelement {
+    background-color: var(--my-backgorund-color);
+    color: var( --my-color);
+    font-size: var(--my-font-size);
+}

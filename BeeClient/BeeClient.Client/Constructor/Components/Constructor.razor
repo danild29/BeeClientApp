@@ -1,0 +1,145 @@
+﻿@using Newtonsoft.Json
+
+@inject IJSRuntime JsRun
+
+<div id="mydrag-container"
+    class="dropzone mydrag-container1"
+    @ondragover="ChangePosition"
+    @ondragenter="OnDragEnter"
+    @ondragleave="OnDragLeave"
+    style="--mywidth: @StrWidth; --myheight: @StrHeight;">
+
+    
+    <StretcherComponent Ctor="this" handler="StretcherHander"></StretcherComponent>
+    
+    <CascadingValue Value="this">
+
+        @foreach (var el in Elements)
+        {
+            if(el is TextElement tc)
+            {
+                <TextComponent Element="tc"></TextComponent>
+            }
+            else if(el is ImageElement ic)
+            {
+                <ImageComponent Element="ic"></ImageComponent>
+            }
+        }
+
+    </CascadingValue>
+</div>
+
+@code {
+    //@ondrop="ChangePosition"
+    //ondragover="event.preventDefault()"
+
+    [Parameter] public Func<string, bool, Task> LogInfo { get; set; }
+    [Parameter] public List<BaseElement> Elements { get; set; }
+    [Parameter] public EventCallback<ComponentBase> OnElementClicked { get; set; }
+    [Parameter] public ConsructorConfig Config { get; set; }
+
+    public BaseElement ResizeElement { get; private set; }
+    public BaseElement? Payload { get; set; }
+    public BoundingClientRect ConstructorZone { get; set; }
+
+    private StretcherHandler StretcherHander { get; set; } = new StretcherHandler();
+
+    private string StrWidth => Config.Width + "px";
+    private string StrHeight => Config.Height + "px";
+
+    private int lastDragTop = 0;
+    private int lastDragLeft = 0;
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await JsRun.InvokeVoidAsync("MyLogger", "safsafaf");
+            ConstructorZone = await JsRun.InvokeAsync<BoundingClientRect>("MyDOMGetBoundingClientRect");
+        }
+    }
+
+    public async Task Resize(DragEventArgs e)
+    {
+        int newX = (int)(e.ClientX - ConstructorZone.X - ResizeElement.Left - ResizeElement.Width);
+        int newY = (int)(e.ClientY - ConstructorZone.Y - ResizeElement.Top - ResizeElement.Height);
+
+        ResizeElement.Width += newX;
+        ResizeElement.Height += newY;
+
+        if(ResizeElement.Width < 1)
+        {
+            ResizeElement.Width = 1;
+        }
+        if (ResizeElement.Height < 1)
+        {
+            ResizeElement.Height = 1;
+        }
+
+        StateHasChanged();
+    }
+
+    public async Task ElementCliked(ComponentBase component)
+    {
+        await OnElementClicked.InvokeAsync(component);    
+        ResizeElement = (BaseElement)(component.GetType().GetProperty("Element").GetValue(component));
+
+        StretcherHander.Show(ResizeElement);
+    }
+
+    private async Task ChangePosition(DragEventArgs e)
+    {
+        if(Payload is null)
+        {
+            await LogInfo(JsonConvert.SerializeObject(e), false);
+            return;
+        }
+
+        if(lastDragLeft == 0 && lastDragTop == 0)
+        {
+            (lastDragLeft, lastDragTop)= ((int)e.ClientX, (int)e.ClientY);
+        }
+
+        int top = (int)(Payload.Top + e.ClientY - lastDragTop);
+        int left = (int)(Payload.Left + e.ClientX - lastDragLeft);
+
+        if (top > 0 && top < Config.Height - Payload.Height)
+            Payload.Top = top;
+
+        if (left > 0 && left < Config.Width - Payload.Width)
+            Payload.Left = left;
+
+        (lastDragLeft, lastDragTop)= ((int)e.ClientX, (int)e.ClientY);
+
+        StretcherHander.Show(ResizeElement);
+    }
+
+    private void OnDragLeave()
+    {
+        (lastDragLeft, lastDragTop) = (0, 0);
+    }
+    
+    private void OnDragEnter() { }
+
+    private void OnDrop() { }
+
+
+
+
+    // double startX = 0;
+    // double startY = 0;
+    // private async Task OnMouseMove(MouseEventArgs args)
+    // {
+    //     if (Payload is not null)
+    //     {
+    //         Payload.Left += (int)(args.PageX - startX);
+    //         Payload.Top += (int)(args.PageY - startY);
+    //         startX = args.PageX;
+    //         startY = args.PageY;
+    //         await LogInfo("OnMouseMove with", false);
+    //     }
+    //     await LogInfo("OnMouseMove without", false);
+    // }
+
+}

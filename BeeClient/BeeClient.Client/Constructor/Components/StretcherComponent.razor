@@ -1,0 +1,64 @@
+﻿
+<div style="z-index: 289; position: absolute; visibility: @visible; top: @topPos; left: @leftPos; width: @width; height: @height; background-color: bisque;"
+     draggable="true"
+     @ondragover="Resize"
+     @ondragover:stopPropagation="true"
+     @ondragover:preventDefault="true">
+
+    <div>
+        -
+    </div>
+</div>
+
+
+@code
+{
+    [Parameter] public StretcherHandler handler { get; set; }
+    [Parameter] public Constructor Ctor { get; set; }
+
+    private string leftPos = "0px";
+    private string topPos = "0px";
+    private string width = "20px";
+    private string height = "20px";
+    private string visible = "hidden";
+
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if(firstRender)
+        {
+            base.OnAfterRender(firstRender);
+        }
+        handler.Show = Show;
+    }
+
+    private async Task Resize(DragEventArgs e)
+    {
+        Update();
+        await Ctor.Resize(e);
+    }
+
+    public void Show(BaseElement element)
+    {
+        Update();
+        visible = "visible";
+        StateHasChanged();
+    }
+
+
+    public void Update()
+    {
+        if (Ctor.ResizeElement is null) return;
+        var resized = Ctor.ResizeElement;
+        int w = 20;
+        int h = 20;
+
+        leftPos = (resized.Left + resized.Width - w / 2 ) + "px";
+        topPos = (resized.Top + resized.Height - h / 2 ) + "px";
+    }
+
+}
+
+
+
+

@@ -1,0 +1,76 @@
+﻿@inherits BaseComponent<TextElement>
+
+<div @ondragstart="OnDragStartElemnt"
+     @ondragleave="OnDragEndElement"
+     
+     class="mydraggable"
+     style="resize: both; --my-top: @Top; --my-left: @Left; --mywidth: @Width; --myheight: @Height; cursor: @cursor;"
+     draggable="true"
+     @onclick="@OnClick"
+     @ondblclick="@OnDoubleClick"
+     @ondblclick:stopPropagation="true"
+     @ondblclick:preventDefault="true"
+     @onmouseleave="() => {Edits = false;}"
+     @onmouseleave:stopPropagation="true"
+     @onmouseleave:preventDefault="true">
+
+    @if (Edits)
+    {
+        <input class="form-control" type="text"
+               style="background-color:lightyellow;"
+               value="@Text"
+               @oninput="@(e => { Text = e.Value!.ToString()!; })"
+               />
+    }
+    else
+    {
+        <div class="mytextelement" style="--my-font-size: @FontSize; --my-color: @Color; --my-backgorund-color: @BackgroundColor;">
+            @Text
+        </div>
+    }
+
+</div>
+
+@code{
+    public string Text
+    {
+        get => Element.Text;
+        set
+        {
+            Element.Text = value;
+        }
+    }
+    public string FontSize
+    {
+        get => Element.FontSize + "px";
+        set
+        {
+            if (value.EndsWith("px"))
+            {
+                Element.FontSize = int.Parse(value.Substring(0, value.Length - 2));
+            }
+        }
+    }
+    public string Color
+    {
+        get => Element.Color.Name;
+        set
+        {
+            Element.Color = System.Drawing.Color.FromName(value);
+        }
+    }
+    public string BackgroundColor
+    {
+        get => Element.BackgroundColor.Name;
+        set
+        {
+            Element.BackgroundColor = System.Drawing.Color.FromName(value);
+        }
+    }
+
+    bool Edits = false;
+    protected virtual async Task OnDoubleClick(EventArgs e)
+    {
+        Edits = true;
+    }
+}
