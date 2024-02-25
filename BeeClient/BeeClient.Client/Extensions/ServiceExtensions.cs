@@ -21,7 +21,7 @@ public static class ServiceExtensions
         services.AddScoped<DataSender>();
         services.AddScoped<TokenData>();
         services.AddScoped<UserData>();
-
+        services.AddScoped<CompanyData>();
 
         services.AddBlazoredLocalStorage();
     }
