@@ -65,7 +65,7 @@ public class UserData
         {
             return await GetMeFromStorage();
         }
-        return Result.Failure<UserModel>(Error.None);
+        return Result.Failure<UserModel>(Error.CreateCustom(""));
     }
     public async Task ToggleRemember(bool save)
     {

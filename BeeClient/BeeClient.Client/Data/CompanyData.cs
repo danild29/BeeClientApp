@@ -12,7 +12,7 @@ namespace BeeClient.Client.Data
         {
             this.sender = sender;
         }
-        public async Task<Result<Comapny>> Register(CreateCompany company)
+        public async Task<Result<Company>> Register(CreateCompany company)
         {
             return await sender.Post<Company, CreateCompany>(company, "companies/new");
         }
