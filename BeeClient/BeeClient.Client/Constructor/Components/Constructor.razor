@@ -65,8 +65,17 @@
         int newX = (int)(e.ClientX - ConstructorZone.X - ResizeElement.Left - ResizeElement.Width);
         int newY = (int)(e.ClientY - ConstructorZone.Y - ResizeElement.Top - ResizeElement.Height);
 
-        ResizeElement.Width += newX;
-        ResizeElement.Height += newY;
+        // Костыль проблема с резким перемещение
+        if (newX > 10 || newY > 10) return;
+
+        if (ResizeElement.Height + ResizeElement.Top < Config.Height || newY < 0)
+        {
+            ResizeElement.Height += newY;
+        }
+        if (ResizeElement.Width + ResizeElement.Left < Config.Width || newX < 0)
+        {
+            ResizeElement.Width += newX;
+        }
 
         if(ResizeElement.Width < 1)
         {

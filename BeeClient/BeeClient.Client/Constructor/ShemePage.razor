@@ -44,6 +44,8 @@
     <button @onclick="AddImage">add AddImaget</button>
     <button @onclick="Serialize">serialize</button>
     <button @onclick="DeleteElement">delete</button>
+    <button @onclick="IncreaseZone">increase zone</button>
+    <button @onclick="DecreaseZone">decrease zone</button>
 </div>
 
 
@@ -80,8 +82,23 @@
             ElementsList.Remove(bc.Element);
             StretcherHander.Hide();
         }
+        else if (ClickedElement is BaseComponent<ImageElement> ic)
+        {
+            ElementsList.Remove(ic.Element);
+            StretcherHander.Hide();
+        }
     }
 
+    private async Task DecreaseZone()
+    {
+        ConsructorConfig.Height -= 200;
+        StretcherHander.Hide();
+    }
+    private async Task IncreaseZone()
+    {
+        ConsructorConfig.Height += 200;
+        StretcherHander.Hide();
+    }
     private async Task Serialize()
     {
         string serialized = JsonConvert.SerializeObject(ElementsList);

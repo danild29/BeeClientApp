@@ -18,9 +18,11 @@
 
     private string leftPos = "0px";
     private string topPos = "0px";
-    private string width = "20px";
-    private string height = "20px";
+    private string width => w + "px";
+    private string height => h + "px";
     private string visible = "hidden";
+    private int w = 20;
+    private int h = 20;
 
 
     protected override void OnAfterRender(bool firstRender)
@@ -55,9 +57,7 @@
     {
         if (Ctor.ResizeElement is null) return;
         var resized = Ctor.ResizeElement;
-        int w = 20;
-        int h = 20;
-
+        
         leftPos = (resized.Left + resized.Width - w / 2 ) + "px";
         topPos = (resized.Top + resized.Height - h / 2 ) + "px";
     }
