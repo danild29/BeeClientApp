@@ -30,6 +30,7 @@
             base.OnAfterRender(firstRender);
         }
         handler.Show = Show;
+        handler.Hide = Hide;
     }
 
     private async Task Resize(DragEventArgs e)
@@ -38,6 +39,10 @@
         await Ctor.Resize(e);
     }
 
+    public void Hide()
+    {
+        visible = "hidden";
+    }
     public void Show(BaseElement element)
     {
         Update();

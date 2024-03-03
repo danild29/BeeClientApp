@@ -1,13 +1,13 @@
 ﻿@page "/sheme"
 @using System.Reflection
-@rendermode InteractiveWebAssembly
+@rendermode InteractiveServer
 @inject ILogger<ShemePage> Logger
 @inject IJSRuntime JsRun
 
 
 
 
-<Constructor Elements="ElementsList" LogInfo="LogInfo" Config="ConsructorConfig" OnElementClicked="ElementClicked">
+<Constructor Elements="ElementsList" LogInfo="LogInfo" Config="ConsructorConfig" StretcherHander="StretcherHander" OnElementClicked="ElementClicked">
 </Constructor>
 
 
@@ -43,10 +43,12 @@
     <button @onclick="AddElement">add element text</button>
     <button @onclick="AddImage">add AddImaget</button>
     <button @onclick="Serialize">serialize</button>
+    <button @onclick="DeleteElement">delete</button>
 </div>
 
 
 @code {
+    public StretcherHandler StretcherHander { get; set; } = new StretcherHandler();
     public ConsructorConfig ConsructorConfig = new ConsructorConfig();
     private int IdGiver = 1;
     private List<BaseElement> ElementsList = new();
@@ -69,6 +71,15 @@
                 Top = 0
             });
 
+    }
+
+    private async Task DeleteElement()
+    {
+        if (ClickedElement is BaseComponent<TextElement> bc)
+        {
+            ElementsList.Remove(bc.Element);
+            StretcherHander.Hide();
+        }
     }
 
     private async Task Serialize()

@@ -10,4 +10,5 @@ public class StretcherHandler
     public Func<DragEventArgs, Task> ResizeOut { get; set; }
 
     public Action<BaseElement> Show {  get; set; }
+    public Action Hide {  get; set; }
 }

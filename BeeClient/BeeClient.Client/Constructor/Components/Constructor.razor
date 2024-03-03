@@ -42,7 +42,7 @@
     public BaseElement? Payload { get; set; }
     public BoundingClientRect ConstructorZone { get; set; }
 
-    private StretcherHandler StretcherHander { get; set; } = new StretcherHandler();
+    [Parameter] public StretcherHandler StretcherHander { get; set; }
 
     private string StrWidth => Config.Width + "px";
     private string StrHeight => Config.Height + "px";
