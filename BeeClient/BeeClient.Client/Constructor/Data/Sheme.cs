@@ -27,6 +27,13 @@ public class ImageElement : BaseElement
     public string Url { get; set; }
 }
 
+public class TableElement : BaseElement
+{
+    public string[,] Cells { get; set; }
+
+}
+
+
 public class BoundingClientRect
 {
     public double X { get; set; }

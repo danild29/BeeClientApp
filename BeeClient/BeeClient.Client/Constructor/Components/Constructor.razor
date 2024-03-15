@@ -24,6 +24,10 @@
             {
                 <ImageComponent Element="ic"></ImageComponent>
             }
+            else if(el is TableElement tabc)
+            {
+                <TableComponent Element="tabc"></TableComponent>
+            }
         }
 
     </CascadingValue>
@@ -122,6 +126,18 @@
         (lastDragLeft, lastDragTop)= ((int)e.ClientX, (int)e.ClientY);
 
         StretcherHander.Show(ResizeElement);
+
+        if(Payload.Top + Payload.Height > Config.Height - 100)
+        {
+            Config.Height += 200;
+            StretcherHander.Hide();
+        }
+
+        if(!Elements.Any(e => e.Top + e.Height > Config.Height - 300))
+        {
+            Config.Height -= 200;
+            StretcherHander.Hide();
+        }
     }
 
     private void OnDragLeave()

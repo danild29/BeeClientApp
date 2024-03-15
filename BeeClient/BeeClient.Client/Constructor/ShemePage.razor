@@ -73,6 +73,17 @@
                 Top = 0
             });
 
+        TableElement table = new TableElement()
+            {
+                Id = IdGiver++,
+                Width = 200,
+                Height = 200,
+                Left = 500,
+                Top = 10,
+                Cells = new string[2, 2] { {"a", "b"}, {"c", "d"} },
+            };
+
+        ElementsList.Add(table);
     }
 
     private async Task DeleteElement()
