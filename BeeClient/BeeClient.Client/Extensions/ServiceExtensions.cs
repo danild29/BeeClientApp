@@ -8,7 +8,7 @@ public static class ServiceExtensions
 {
     public static void ConfigureCommonServices(this IServiceCollection services)
     {
-        string ServerAddres = @"http://213.171.4.235:8082/api/";
+        string ServerAddres = @"http://213.171.4.235:";
         services.AddScoped(sp =>
             new HttpClient
             {

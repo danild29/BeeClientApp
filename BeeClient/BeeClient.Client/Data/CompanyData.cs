@@ -8,6 +8,7 @@ namespace BeeClient.Client.Data;
 
 public class CompanyData
 {
+    private readonly static string address = "8081/api/companies/";
     private readonly DataSender sender;
 
     public CompanyData(DataSender sender)
@@ -17,7 +18,7 @@ public class CompanyData
     public async Task<Result<Company>> RegisterAsync(CreateCompany company)
     {
         // Выполняем POST-запрос на сервер для регистрации компании
-        return await sender.Post<Company, CreateCompany>(company, "companies/new");
+        return await sender.Post<Company, CreateCompany>(company, address + "new");
     }
 
 }
@@ -27,13 +28,13 @@ public class CompanyData
 // для превращения json в класс можешь использовать например https://json2csharp.com/
 public class Company
 {
-    public string СompanyName { get; set; }
-    public string Inn { get; set; }
-    public string PhNumber { get; set; }
-    public string CompanyTag { get; set; }
-    public string Address { get; set; }
+    public string Name { get; set; }
+    public string WorkType1 { get; set; }
+    public string WorkType2 { get; set; }
+    public string Description { get; set; }
+    public string INN { get; set; }
+    public string Phone { get; set; }
     public string Email { get; set; }
-    public string Experience { get; set; }
-    public string IsActive { get; set; }
+    public string Adress { get; set; }
 
 }

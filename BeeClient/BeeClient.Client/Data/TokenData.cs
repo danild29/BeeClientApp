@@ -7,7 +7,7 @@ namespace BeeClient.Client.Data;
 
 public class TokenData
 {
-    private readonly static string address = "token/";
+    private readonly static string address = "8081/api/token/";
     private readonly DataSender _sender;
 
 
