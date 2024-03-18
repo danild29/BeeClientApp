@@ -12,11 +12,13 @@ public class DataSender
     private readonly HttpClient client;
 
     private readonly LogWriter logWriter;
+    private readonly ILogger<DataSender> logger;
 
-    public DataSender(HttpClient client, LogWriter logWriter)
+    public DataSender(HttpClient client, LogWriter logWriter, ILogger<DataSender> logger)
     {
         this.client = client;
         this.logWriter = logWriter;
+        this.logger = logger;
     }
 
 
@@ -30,8 +32,18 @@ public class DataSender
 
         StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
 
-        HttpResponseMessage response = await client.PostAsync(url, data);
-        await logWriter.WriteToConsole(response);
+        LoggerExttensions.Logger.Information(url);
+        LoggerExttensions.Logger.Information(JsonConvert.SerializeObject(data));
+        HttpResponseMessage response;
+        try
+        {
+            response = await client.PostAsync(url, data);
+        }
+        catch (Exception ex)
+        {
+            throw;
+        }
+        LoggerExttensions.Logger.Information(JsonConvert.SerializeObject(response));
 
         string result = await response.Content.ReadAsStringAsync();
 
@@ -56,7 +68,9 @@ public class DataSender
         HttpResponseMessage response = await client.GetAsync(url);
         await logWriter.WriteToConsole(response);
 
+        LoggerExttensions.Logger.Information(url);
         string result = await response.Content.ReadAsStringAsync();
+        LoggerExttensions.Logger.Information(JsonConvert.SerializeObject(response));
 
         if (response.IsSuccessStatusCode)
         {
