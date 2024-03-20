@@ -1,5 +1,5 @@
-﻿//using BeeClient.Client.Data.Logs;
-using BeeClient.Client.Entities.Models;
+﻿using BeeClient.Client.Entities.Models;
+using BeeClient.Client.Extensions;
 using BeeClient.Client.Helpers;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
@@ -32,18 +32,21 @@ public class DataSender
 
         StringContent data = new StringContent(json, Encoding.UTF8, "application/json");
 
-        LoggerExttensions.Logger.Information(url);
-        LoggerExttensions.Logger.Information(JsonConvert.SerializeObject(data));
+        logger.LogInformation(url);
+        logger.LogInformation(JsonConvert.SerializeObject(data) + json);
         HttpResponseMessage response;
         try
         {
             response = await client.PostAsync(url, data);
+            await logWriter.WriteToConsole(response);
+            logger.LogInformation(JsonConvert.SerializeObject(response));
         }
         catch (Exception ex)
         {
+            await logWriter.WriteToConsole(ex);
+            logger.LogInformation(JsonConvert.SerializeObject(ex));
             throw;
         }
-        LoggerExttensions.Logger.Information(JsonConvert.SerializeObject(response));
 
         string result = await response.Content.ReadAsStringAsync();
 
@@ -65,12 +68,24 @@ public class DataSender
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        HttpResponseMessage response = await client.GetAsync(url);
-        await logWriter.WriteToConsole(response);
+        logger.LogInformation(url + token ?? string.Empty);
+        HttpResponseMessage response;
+        try
+        {
+            response = await client.GetAsync(url);
+            await logWriter.WriteToConsole(response);
+            logger.LogInformation(JsonConvert.SerializeObject(response));
+        }
+        catch (Exception ex)
+        {
+            await logWriter.WriteToConsole(ex);
+            logger.LogInformation(JsonConvert.SerializeObject(ex));
+            throw;
+        }
 
-        LoggerExttensions.Logger.Information(url);
+        logger.LogInformation(url);
         string result = await response.Content.ReadAsStringAsync();
-        LoggerExttensions.Logger.Information(JsonConvert.SerializeObject(response));
+        logger.LogInformation(JsonConvert.SerializeObject(response));
 
         if (response.IsSuccessStatusCode)
         {

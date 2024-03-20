@@ -22,6 +22,14 @@ public class LogWriter
         await _logger.LogInfo(message);
     }
 
+    public async Task WriteToConsole(Exception exception)
+    {
+        if (!Islogging) return;
+
+        var message = JsonConvert.SerializeObject(exception);
+        await _logger.LogInfo(message);
+    }
+
     public async Task WriteToConsole(string message)
     {
         if (!Islogging) return;
