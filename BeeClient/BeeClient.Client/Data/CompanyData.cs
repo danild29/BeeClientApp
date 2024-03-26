@@ -3,6 +3,8 @@ using BeeClient.Client.Entities.Models;
 using Blazored.LocalStorage;
 using System.Net;
 using System.Reflection;
+using BeeClient.Client.Extensions;
+
 
 namespace BeeClient.Client.Data;
 
@@ -10,17 +12,19 @@ public class CompanyData
 {
     private readonly static string address = "8081/api/companies/";
     private readonly DataSender sender;
+    private readonly string ServerAddres;
 
-    public CompanyData(DataSender sender)
+    public CompanyData(DataSender sender, string ServerAddres)
     {
         this.sender = sender;
+        this.ServerAddres = ServerAddres;
     }
     public async Task<Result<Company>> RegisterAsync(CreateCompany company)
     {
         // Выполняем POST-запрос на сервер для регистрации компании
-        return await sender.Post<Company, CreateCompany>(company, address + "new");
+        return await sender.Post<Company, CreateCompany>(company, ServerAddres + address + "new");
     }
-
+    
 }
 
 
