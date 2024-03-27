@@ -56,7 +56,7 @@ public class Result
 
     public static Result Success() => new(true, Error.None);
     public static Result Failure(Error error) => new(false, error);
-    public static Result<TValue> Failure<TValue>(Error error) => new(default, false, error);
+    public static Result<TValue> Failure<TValue>(Error error) => new Result<TValue>(default, false, error);
 
 }
 
@@ -64,6 +64,11 @@ public class Error
 {
     public HttpResponseMessage? HttpResponse { get; set; }
     public string Content { get ; set; }
+
+    public static Error CreateCustom(string content)
+    {
+        return new Error(null, content);
+    }
 
     public static async Task<Error> Create(HttpResponseMessage HttpResponse)
     {

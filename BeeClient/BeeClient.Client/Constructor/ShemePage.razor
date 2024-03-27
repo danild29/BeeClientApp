@@ -1,0 +1,166 @@
+﻿@page "/sheme"
+@using System.Reflection
+@rendermode InteractiveServer
+@inject ILogger<ShemePage> Logger
+@inject IJSRuntime JsRun
+
+
+
+
+<Constructor Elements="ElementsList" LogInfo="LogInfo" Config="ConsructorConfig" StretcherHander="StretcherHander" OnElementClicked="ElementClicked">
+</Constructor>
+
+
+<div style=" position: absolute; right: 0; top: 0;">
+    @if (myPropertyInfo is not null)
+    {
+        <div>
+            @foreach(PropertyInfo property in myPropertyInfo )
+            {
+                if (!(property.PropertyType == typeof(int) || property.PropertyType == typeof(string)))
+                {
+                    continue;
+                }
+                
+                <div>        
+                    <div>@property.Name</div>
+
+                    <input type="text" value="@property.GetValue(ClickedElement)"
+                       @onchange="@((ChangeEventArgs e) => {
+                            property.SetValue(ClickedElement, Convert.ChangeType(e.Value,  property.PropertyType,null));
+                       })" />
+                </div>
+
+            }
+
+            @* <button type="submit">Submit</button> *@
+        </div>
+    }
+</div>
+
+
+<div>
+    <button @onclick="AddElement">add element text</button>
+    <button @onclick="AddImage">add AddImaget</button>
+    <button @onclick="Serialize">serialize</button>
+    <button @onclick="DeleteElement">delete</button>
+    <button @onclick="IncreaseZone">increase zone</button>
+    <button @onclick="DecreaseZone">decrease zone</button>
+</div>
+
+
+@code {
+    public StretcherHandler StretcherHander { get; set; } = new StretcherHandler();
+    public ConsructorConfig ConsructorConfig = new ConsructorConfig();
+    private int IdGiver = 1;
+    private List<BaseElement> ElementsList = new();
+
+    private ComponentBase? ClickedElement { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ElementsList.Add(new TextElement { Id = IdGiver++, Text = "Mow the lawn", Width = 50, Height = 150, Left = 200, Top = 220});
+        ElementsList.Add(new TextElement { Id = IdGiver++, Text = "change tires", Width = 200, Height = 100, Left = 500, Top = 10 });
+
+
+        ElementsList.Add(new ImageElement
+            {
+                Id = IdGiver++,
+                Url = @"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdXVpCHxvk47P1nHKLZmIrKGOVe5G1Hjm0iOJZjwJrBw&s",
+                Width = 100,
+                Height = 50,
+                Left = 0,
+                Top = 0
+            });
+
+        TableElement table = new TableElement()
+            {
+                Id = IdGiver++,
+                Width = 200,
+                Height = 200,
+                Left = 500,
+                Top = 10,
+                Cells = new string[2, 2] { {"a", "b"}, {"c", "d"} },
+            };
+
+        ElementsList.Add(table);
+    }
+
+    private async Task DeleteElement()
+    {
+        if (ClickedElement is BaseComponent<TextElement> bc)
+        {
+            ElementsList.Remove(bc.Element);
+            StretcherHander.Hide();
+        }
+        else if (ClickedElement is BaseComponent<ImageElement> ic)
+        {
+            ElementsList.Remove(ic.Element);
+            StretcherHander.Hide();
+        }
+    }
+
+    private async Task DecreaseZone()
+    {
+        ConsructorConfig.Height -= 200;
+        StretcherHander.Hide();
+    }
+    private async Task IncreaseZone()
+    {
+        ConsructorConfig.Height += 200;
+        StretcherHander.Hide();
+    }
+    private async Task Serialize()
+    {
+        string serialized = JsonConvert.SerializeObject(ElementsList);
+    }
+
+    private async Task AddElement()
+    {
+        ElementsList.Add(new TextElement { Id = IdGiver++, Text = "some work", Width = 100, Height = 50, Left = 0, Top = 0 });
+    }
+
+    private async Task AddImage()
+    {
+        ElementsList.Add(new ImageElement
+            {
+                Id = IdGiver++,
+                Url = @"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTdXVpCHxvk47P1nHKLZmIrKGOVe5G1Hjm0iOJZjwJrBw&s",
+                                            Width = 300, Height = 350, Left = 0, Top = 0 });
+    }
+    PropertyInfo[] myPropertyInfo = null;
+
+
+
+    private async Task ElementClicked(ComponentBase element)
+    {
+
+        //if (typee.IsSubclassOf(typeof(BaseShemeElement<>)))
+        var prop = element.GetType().GetProperty("Element");
+        ClickedElement = element; // (BaseElement?)prop?.GetValue(element);
+
+        if (ClickedElement == null) return;
+        Type type = element.GetType();
+        myPropertyInfo = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+
+    }
+
+    private void Submit() { }
+    
+    int index = 0;
+
+    public async Task LogInfo(string info, bool level = true)
+    {
+        if (level == true)
+        {
+            await JsRun.InvokeVoidAsync("MyLogger", info);
+        }
+        else
+        {
+            index++;
+            if (index % 10 == 0)
+                await JsRun.InvokeVoidAsync("MyLogger", info);
+
+        }
+    }
+}

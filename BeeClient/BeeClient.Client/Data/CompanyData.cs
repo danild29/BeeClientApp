@@ -8,6 +8,7 @@ using BeeClient.Client.Extensions;
 
 namespace BeeClient.Client.Data;
 
+
 public class CompanyData
 {
     private readonly static string address = "http://213.171.4.235:8081/api/companies/";

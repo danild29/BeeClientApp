@@ -1,0 +1,49 @@
+﻿@inherits BaseComponent<TableElement>
+
+
+<div @ondragstart="(e) => OnDragStartElemnt(e)"
+     @ondragend="OnDragEndElement"
+     class="draggable @dropClass"
+     style="--topp: @Top; --leftp: @Left; --widthp: @Width; --heightp: @Height;"
+     draggable="true"
+     @onclick="@OnClick">
+     
+
+            
+
+    <table class="table">
+        
+        <thead>
+            <tr>
+            @for (int i = 0; i < Element.Cells.GetLength(0); i++) 
+            {
+                <th>
+                    @Element.Cells[i, 0];
+                </th>
+            }
+            </tr>
+
+        </thead>
+        <tbody>
+            <tr>
+                @for (int i = 0; i < Element.Cells.GetLength(0); i++) 
+                {
+                    @for (int j = 1; j < Element.Cells.GetLength(1); j++)
+                    {
+                    <td>
+                            @Element.Cells[i, j];
+                    </td>
+                    }
+                }
+            </tr>
+        </tbody>
+    </table>
+
+
+</div>
+
+
+
+@code {
+    //public string Url => $"url( {Element.Url} )";
+}

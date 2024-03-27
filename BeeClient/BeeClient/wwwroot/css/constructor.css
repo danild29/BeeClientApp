@@ -1,0 +1,54 @@
+
+
+.dropzone {
+    padding: 3px;
+    border: 1px dashed #75868a;
+    list-style: none;
+}
+
+:root {
+    --topp: 0px;
+    --leftp: 0px;
+    --widthp: 0px;
+    --heightp: 0px;
+    --urlp: '';
+}
+
+
+#drag-container {
+    width: var(--widthp);
+    height: var(--heightp);
+    border: 1px solid black;
+    position: relative;
+}
+
+.drag-container-inner {
+    width: var(--widthp);
+    height: var(--heightp);
+    border: 1px solid black;
+}
+
+.draggable {
+    background-color: lightblue;
+    position: absolute;
+    width: var(--widthp);
+    height: var(--heightp);
+    top: var(--topp);
+    left: var(--leftp);
+}
+
+.text-element {
+    background-color: var(--backgorund-colorp);
+    color: var( --colorp);
+    font-size: var(--font-sizep);
+}
+
+
+.image-element {
+    width: 100%;
+    height: 100%;
+    background-image: var(--urlp);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
