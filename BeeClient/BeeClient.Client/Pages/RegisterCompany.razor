@@ -80,16 +80,41 @@
     CreateCompany company = new();
     private bool loading;
     private bool save = false;
-
     private List<string> messages = new();
+
+    [Inject]
+    private CompanyData _companyData { get; set; }
 
     private async Task HandleSubmit()
     {
-        var result = companyData.Register(company);
+        loading = true;
+        try
+        {
+            // Отправка данных на сервер
+            var result = await _companyData.RegisterAsync(company);
 
-        // не забудь проверить ответ сервисат и отоброзить ошибки, ошибки тоже надо десериализовать в отдельный класс . 
-        // Можешь смотреть ответы сервера в консоли там все ответы пишутся 
+           result.Match(me =>
+             {
+                 //AlertService.Success("Registration successful", keepAfterRouteChange: true);
+                 Navigation.NavigateTo("companies/my");
+             },
+             error =>
+             {
+                 //AlertService.Error(ex.Message);
+
+                 var valid = ValidationModel.GetValidation(error);
+
+                 messages = valid.GetAllErrors().ToList();
+             });
+        }
+        catch (Exception ex)
+        {
+            // Здесь можно обработать исключение, если оно возникнет
+            Console.WriteLine($"An error occurred: {ex.Message}");
+        }
+        finally
+        {
+            loading = false;
+        }
     }
-
-
 }

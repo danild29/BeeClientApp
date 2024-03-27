@@ -10,12 +10,7 @@ public static class ServiceExtensions
 {
     public static void ConfigureCommonServices(this IServiceCollection services)
     {
-        string ServerAddres = @"http://213.171.4.235:8082/api/";
-        services.AddScoped(sp =>
-            new HttpClient
-            {
-                BaseAddress = new Uri(ServerAddres)
-            });
+        services.AddScoped(sp => new HttpClient());
         services.AddScoped<IAlertService, AlertService>();
 
         services.AddScoped<JavascriptHelper>();
@@ -23,7 +18,7 @@ public static class ServiceExtensions
         services.AddScoped<DataSender>();
         services.AddScoped<TokenData>();
         services.AddScoped<UserData>();
-
+        services.AddScoped<CompanyData>();
 
         services.AddBlazoredLocalStorage();
     }
