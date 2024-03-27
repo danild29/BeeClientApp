@@ -10,7 +10,7 @@ namespace BeeClient.Client.Data;
 
 public class UserData
 {
-    private readonly static string address = "8081/api/users/";
+    private readonly static string address = "http://213.171.4.235:8081/api/users/";
 
     private string tokenKey = nameof(TokenModel);
     private string accountKey = nameof(UserAccount);
